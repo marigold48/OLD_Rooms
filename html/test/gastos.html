@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta tag='viewport' content='width=device-width, item-scalable=no'>
+<!--	==================== REMOTO ================== -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+<!--	==================== LOCAL ================== >
+
+	<link rel="stylesheet" href="lib/bootstrap.css">
+	<link rel="stylesheet" href="lib/font-awesome.css">
+	<script src="lib/jQuery.js"></script>
+	<script src="lib/bootstrap.js"></script>
+	<script src="lib/vue.js"></script -->
+
+	<link rel="stylesheet" href="css/vueModal.css">
+
+<style type="text/css">
+.item {
+	cursor: pointer;
+}
+ul {
+	padding-left: 2em;
+	line-height: 1.5em;
+	list-style-type: none;
+}
+</style>
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+	<script type='text/javascript' src='k1/libK1_Topol.js'></script>
+	<script type='text/javascript' src='k1/libK1_Clases.js'></script>
+	<script type='text/javascript' src='k1/libK1_Utils.js'></script>
+	<script type='text/javascript' src='k1/libK1_Algebra.js'></script>
+	<script type='text/javascript' src='k1/libK1_Sesion.js'></script>
+	<script type='text/javascript' src='k1/libK1_Ajax.js'></script>
+
+	
+	<script type='text/javascript' src='js/rooms_VGlob.js'></script>
+	<script type='text/javascript' src='js/rooms_vApps.js'></script>
+	<script type='text/javascript' src='js/rooms_Ajax.js'></script>
+	<script type='text/javascript' src='js/rooms_Random.js'></script>
+	<script type='text/javascript' src='js/rooms_Clases.js'></script>
+	<script type='text/javascript' src='js/rooms_Sesion.js'></script>
+	<script type='text/javascript' src='js/rooms_Gastos.js'></script>
+
+	<script type='text/javascript' src='js/pkg_Grupo.js'></script>
+	<script type='text/javascript' src='js/pkg_Owner.js'></script>
+	<script type='text/javascript' src='js/pkg_Flats.js'></script>
+	<script type='text/javascript' src='js/pkg_Rooms.js'></script>
+	<script type='text/javascript' src='js/pkg_Pactos.js'></script>
+	<script type='text/javascript' src='js/pkg_Money.js'></script>
+	<script type='text/javascript' src='js/pkg_Stock.js'></script>
+	<script type='text/javascript' src='js/mod_gastos.js'></script>
+
+<title>Gastos</title>
+
+</head>
+<body onload="javascript:initRebuts()">
+
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Gastos</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="index.html">Home</a></li>
+
+
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+					<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:cambiaPwdUser()">Cambiar password</a></li>
+						<li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav> 
+
+
+<div class="container">
+<div class="row">
+
+<div class="col-md-12">
+	<div id="divCargosJar">
+		<h2>{{jar}}</h2>
+		<table class="table table-bordered">
+			<thead>
+				<th style="text-align: center;" v-for="mes in meses">{{mes}}</th>
+			</thead>
+			<tr v-for="tipo in tipos">
+				<td>{{tipo.tag}}</td>
+				<td  style="text-align: right;" v-for="cargo in tipo.cargos">{{cargo}}</td>
+			</tr>
+		</table>
+	</div>
+</div> <!-- md-12 -->
+
+</body>
+</html>

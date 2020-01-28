@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+	<meta name='viewport' content='width=device-width, user-scalable=no'>
+
+<!--  ==================== REMOTO ================== -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+	<link rel="stylesheet" href="css/vueModal.css">
+
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+	<script type='text/javascript' src='k1/libK1_Topol.js'></script>
+	<script type='text/javascript' src='k1/libK1_Clases.js'></script>
+	<script type='text/javascript' src='k1/libK1_Utils.js'></script>
+	<script type='text/javascript' src='k1/libK1_Algebra.js'></script>
+	<script type='text/javascript' src='k1/libK1_Sesion.js'></script>
+	<script type='text/javascript' src='k1/libK1_Ajax.js'></script>
+
+	
+	<script type='text/javascript' src='js/rooms_VGlob.js'></script>
+	<script type='text/javascript' src='js/rooms_vApps.js'></script>
+	<script type='text/javascript' src='js/rooms_Ajax.js'></script>
+	<script type='text/javascript' src='js/rooms_Random.js'></script>
+	<script type='text/javascript' src='js/rooms_Clases.js'></script>
+	<script type='text/javascript' src='js/rooms_Sesion.js'></script>
+	<script type='text/javascript' src='js/rooms_Gastos.js'></script>
+
+	<script type='text/javascript' src='js/pkg_Grupo.js'></script>
+	<script type='text/javascript' src='js/pkg_Owner.js'></script>
+	<script type='text/javascript' src='js/pkg_Flats.js'></script>
+	<script type='text/javascript' src='js/pkg_Rooms.js'></script>
+	<script type='text/javascript' src='js/pkg_Pactos.js'></script>
+	<script type='text/javascript' src='js/pkg_Money.js'></script>
+
+	<script type='text/javascript' src='js/mod_owners.js'></script>
+	<title>Owners</title>
+	 <script>
+		$(function () {setTimeout(function(){$('[data-toggle="tooltip"]').tooltip(); }, 1000);})
+	</script>
+</head>
+
+
+
+<body onload="initOwners()">
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Owner</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li class="active"><a href="index.html">Home</a></li>
+
+	    </ul>
+
+	    <ul class="nav navbar-nav navbar-right">
+
+	      <li class="dropdown">
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+	        <span class="caret"></span></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="javascript:cambiaPwdUser()">Cambiar password</a></li>
+	          <li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+	        </ul>
+	      </li>
+	    </ul>
+	  </div>
+	</nav> 
+
+<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div id="divOwners" style="border:2px gray solid;margin:8px">
+					<table v-if="owners.length > 0" class="table">
+						<tr v-for="owner in owners" >
+							<td> {{owner.tag}}</td>
+							<td>{{owner.obj.nombre}}</td>
+							<td>{{owner.obj.apell}}</td>
+							<td>{{owner.obj.email}}</td>
+							<td>{{owner.obj.telef}}</td>
+						</tr>
+					</table>
+					<span v-else>No hay Propietarios en este grupo</span>
+				</div>
+			</div> <!-- md-12 -->
+		</div> <!-- row -->
+
+	<div class="row">
+		<div class="col-md-7">
+			<h4 id="h3Flats">Pisos de {{owner}}</h4>
+			<div id="divFlats" style="border:2px gray solid;margin:8px">
+				<table v-if="flats.length > 0" class="table">
+					<tr v-for="flat in flats" >
+						<td v-on:click.stop="showRooms(flat.id0)">{{flat.tag}}</td>
+						<td style="text-align: right;">
+							<button data-toggle="tooltip" title="Información" class="btn btn-edit" v-on:click.stop="editFAQs(flat.id0)"><i class="fa fa-info"></i></button>
+							<button data-toggle="tooltip" title="Inventario" class="btn btn-edit" v-on:click.stop="editStock(flat.id0)"><i class="fa fa-sitemap"></i></button>
+							<button data-toggle="tooltip" title="Editar" class="btn btn-edit" v-on:click.stop="editFlat(flat.id0)"><i class="fa fa-pencil"></i></button>
+							<button data-toggle="tooltip" title="+ Gasto" class="btn btn-edit" v-on:click.stop="addGasto(flat.id0)">+<i class="fa fa-euro"></i></button>
+						</td>
+					</tr>
+				</table>
+				<span v-else>Sin Pisos</span>
+			</div>
+
+			<h4 id="h3Rooms">Habitaciones de {{flat}}</h4>
+			<div id="divRooms" style="border:2px gray solid;margin:8px">
+				<table v-if="rooms.length > 0" class="table">
+					<tr v-for="room in rooms" >
+						<td v-on:click.stop="showPactos(room.id0)">{{room.tag}}</td>
+						<td>{{room.obj.codRoom}}</td>
+						<td>{{room.obj.state.tag}}</td>
+						<td>{{room.obj.precio}}</td>
+						<td>{{room.obj.gastos}}</td>
+					</tr>
+				</table>
+				<span v-else>No hay Habitaciones de este flat</span>
+			</div>
+
+			<h4 id="h3Pactos" style="display:inline-block">Contratos de {{room}} </h4>
+			<span id="morePactos">
+				<button v-if="modo == 'VIVOS'" class="btn btn-success pull-right btn-mas" v-on:click.stop="verTodos()"><i class="fa fa-angle-down"> </i> Todos</button>
+				<button v-else-if="modo == 'TODOS'" class="btn btn-success pull-right btn-mas" v-on:click.stop="verVivos()"><i class="fa fa-angle-up"> </i> Activos</button>
+			</span>
+			<div id="divPactos" style="border:2px gray solid;margin:8px">
+				<table v-if="pactos.length > 0" class="table">
+					<tr v-for="pacto in pactos" >
+						<td v-on:click.stop="showPagos(pacto.id0)">{{pacto.tag}}</td>
+						<td>{{pacto.obj.state.tag}}</td>
+						<td>{{pacto.obj.periodo.toStr_I()}}</td>
+						<td>{{pacto.obj.periodo.toStr_F()}}</td>
+						<td>{{pacto.obj.precio}}</td>
+						<td>{{pacto.obj.gastos}}</td>
+						<td>{{pacto.obj.fianza}}</td>
+						<td style="text-align: right;">
+							<button data-toggle="tooltip" title="Usuario" class="btn btn-edit" v-on:click.stop="editUsrRoomer(pacto.id0)"><i class="fa fa-user"></i></button>
+							<button data-toggle="tooltip" title="Editar" class="btn btn-edit" v-on:click.stop="editPacto(pacto.id0)"><i class="fa fa-pencil"></i></button>
+							<button data-toggle="tooltip" title="+ Pago" class="btn btn-edit" v-on:click.stop="addPago(pacto.id0)">+<i class="fa fa-euro"></i></button>
+							<button data-toggle="tooltip" title="Liquidación" class="btn btn-edit" v-on:click.stop="liquidac(pacto.id0)"><i class="fa fa-sign-out"></i></button>
+						</td>
+				 	</tr>
+				</table>
+				<span v-else>No hay Contratos de esta habitación</span>
+			</div>
+		</div> <!--md7 Owner, Flats, Rooms, Pactos-->
+
+		<div class="col-md-5">
+			<div id="solapas">
+			  <ul class="nav nav-tabs">
+			    <li class="active"><a id="tab1" data-toggle="tab" href="#tabGastos">Gastos</a></li>
+			    <li><a id="tab2" data-toggle="tab" href="#tabPagos">Pagos</a></li>
+			    <li><a id="tab3" data-toggle="tab" href="#tabImport">Import</a></li>
+			    <li><a id="tab4" data-toggle="tab" href="#tabExport">Export</a></li>
+			  </ul>
+			</div> <!-- solapas -->
+
+			<div class="tab-content">
+		    <div id="tabGastos" class="tab-pane fade in active">
+					<h4 id="h3Gastos" style="display:inline-block">Gastos de {{flat}}</h4>
+					<span class="pull-right">
+						<a href="javascript:setAppVista()"><i class="fa fa-eye"></i></a>
+						<a href="javascript:editRebuts()"><i class="fa fa-pencil"></i></a>
+						<a href="javascript:goCalendar()"><i class="fa fa-calendar"></i></a>
+					</span>
+
+					<div id="divGastos" style="border:2px gray solid;margin:8px">
+						<table v-if="gastos.length > 0" class="table">
+							<tr v-for="(gasto,index) in gastos" >
+								<td>{{gasto.tag}}</td>
+								<!-- td>{{gasto.obj.tipo}}</td -->
+								<!-- td>{{gasto.obj.periodo.toStr_I()}}</td -->
+								<!-- td>{{gasto.obj.periodo.toStr_F()}}</td -->
+								<td>{{gasto.obj.euros}} €</td>
+								<td>{{gasto.obj.cargo.toStr_I()}}</td>
+								<td><button  data-toggle="tooltip" title="Editar" class="btn btn-edit pull-right" v-on:click.stop="editGasto(gasto.id0)"><i class="fa fa-pencil"></i></button></td>
+						 	</tr>
+						</table>
+						<span v-else>No hay Gastos de este Piso</span>
+					</div>  <!-- #gastos -->
+				</div><!-- panel gastos -->
+
+		    <div id="tabPagos" class="tab-pane fade">
+					<h4 id="h3Pagos">Pagos de {{pacto}}</h4>
+					<div id="divPagos" style="border:2px gray solid;margin:8px">
+						<table v-if="pagos.length > 0" class="table">
+							<tr v-for="(pago,index) in pagos" >
+								<td>{{pago.tipo}}</td>
+								<!-- td>{{pago.periodo.toStr_I()}}</td -->
+								<!-- td>{{pago.periodo.toStr_F()}}</td -->
+								<td>{{pago.euros}} €</td>
+								<td>{{pago.fingr.toStr_I()||'Pdte'}}</td>
+								<td><button  data-toggle="tooltip" title="Editar" class="btn btn-edit pull-right" v-on:click.stop="editPago(index)"><i class="fa fa-pencil"></i></button></td>
+						 	</tr>
+						</table>
+						<span v-else>No hay Pagos de este Contrato</span>
+					</div> <!-- #pagos -->
+				</div> <!-- panel pagos -->
+
+		    <div id="tabImport" class="tab-pane fade">
+					<div>
+						<h4 id="h3Import" style="display:inline-block">{{flat}}</h3>
+						<button class="btn btn-success pull-right btn-mas"  onclick="importarMovs()"><i class="fa fa-sign-in"> </i></button>
+					</div>
+					<div id="divImport">
+						<form	class="form">
+							<textarea id="csvTA" class="form-control csvTA" rows="20" v-model="csv" name="csv"></textarea>
+						</form>
+					</div> <!-- #import -->
+				</div> <!-- panel import -->
+
+		    <div id="tabExport" class="tab-pane fade">
+					<h4 id="h3Export">Exportar Gastos/Pagos del flat {{flat}}</h4>
+					<div id="divExport" style="border:2px gray solid;margin:8px">
+						<form	class="form" action="javascript:generaCSV()">
+							<textarea class="form-control" rows="20" v-model="export.csv" name="export"	placeholder=""></textarea>
+							<input class="form-control" type="submit" value="Exportar">
+						</form>
+					</div> <!-- #export -->
+				</div> <!-- panel export -->
+			</div> <!-- Tab content -->
+		</div> <!-- md5  Tabs Gastos, Pagos ... -->
+	</div> <!-- row -->
+</div> <!-- container -->
+
+<!-- template for the modal component -->
+	<script type="text/x-template" id="modal-template">
+		<transition name="modal">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+		</div> <!--container -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script>
+
+	<!-- template for the modal component BIG -->
+	<script type="text/x-template" id="modal-template-big">
+		<transition name="modal-big">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container-big">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+
+		</div> <!--container -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script>
+
+
+	<!-- appEditBig -->
+	<div id="appEditBig">
+		<modal-big v-if="showModal" @close="showModal = false">
+
+			<h3 v-if="edit_t === 'REBUTS'" slot="header">Tipos de Gasto</h3>
+			<h3 v-else slot="header">Desconocido</h3>
+
+			<div slot="body">
+				<table v-if="rebuts.length > 0" class="table">
+					<tr v-for="(tipo,index) in rebuts" >
+						<td>{{tipo.tag}}</td>
+						<td>{{tipo.cod}}</td>
+						<td>{{tipo.obj.maskCSV}}</td>
+						<td v-if="tipo.obj.visible">Mostrar</td>
+						<td v-else>Oculto</td>
+						<td style="text-align: right;">
+							<button data-toggle="tooltip" title="Editar" class="btn btn-edit" v-on:click.stop="editGastoT(tipo.id0,index)"><i class="fa fa-pencil"></i></button>
+						</td>
+				 	</tr>
+				</table>
+			</div> <!-- slot body -->
+		</modal-big>
+	</div> <!-- appEditBig -->
+
+	<!-- appEdit -->
+	<div id="appEdit">
+		<modal v-if="showModal" @close="showModal = false">
+
+		<h3 v-if="edit_t === 'STATE'" slot="header">Estado</h3>
+		<h3 v-else-if="edit_t === 'GRUPO'" slot="header">Nombre del grupo?</h3>
+		<h3 v-else-if="edit_t === 'OWNER'" slot="header">Propietario</h3>
+		<h3 v-else-if="edit_t === 'USER'" slot="header">Usuario</h3>
+		<h3 v-else-if="edit_t === 'FLAG'" slot="header">Propiedad</h3>
+		<h3 v-else-if="edit_t === 'ROOM'" slot="header">Habitación</h3>
+		<h3 v-else-if="edit_t === 'GASTO'" slot="header">Gasto</h3>
+		<h3 v-else-if="edit_t === 'GASTO_T'" slot="header">Tipo Gasto</h3>
+		<h3 v-else-if="edit_t === 'VISTA'" slot="header">Ver Gastos:</h3>
+		<h3 v-else slot="header">Desconocido</h3>
+
+		<div slot="body">
+			<form	v-if="edit_t === 'STATE'" class="form" action="javascript:grabaNuevoState()">
+				<select class="form-control" @change="handleChange">
+					<option v-for="opcion in opciones" :value="opcion.cod">{{ opcion.tag }}</option>
+				</select>
+				<input type="submit" value="Grabar">
+			</form>
+
+			<form	v-if="edit_t === 'GRUPO'" class="form" action="javascript:grabaNuevoGrupo()">
+				<input v-model="grupo" type="text" name="grupo">
+				<input type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'OWNER'" class="form" action="javascript:grabaNuevoOwner()">
+				<input class="form-control" v-model="owner.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="owner.obj.nombre" type="text" name="nombre" placeholder="Nombre">
+				<input class="form-control" v-model="owner.obj.apell" type="text" name="apell"	placeholder="Apellidos">
+				<input class="form-control" v-model="owner.obj.email" type="text" name="email"	placeholder="e-Mail">
+				<input class="form-control" v-model="owner.obj.telef" type="text" name="telef"	placeholder="Telefono">
+				<input class="form-control" v-model="owner.obj.codResa" type="text" name="codResa"	placeholder="Código RESA">
+				<input class="form-control" v-model="owner.obj.codIBAN" type="text" name="codIBAN"	placeholder="IBAN">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'USER'" class="form" action="javascript:grabaNuevoUser()">
+				<input v-model="user._id" type="hidden" name="_id">
+				<input v-model="user.id0" type="hidden" name="id0">
+				<input v-model="user.md5" type="hidden" name="md5">
+				<input class="form-control" v-model="user.usr" type="text" name="usr"	placeholder="Usuario">
+				<input class="form-control" v-model="user.pwd" type="text" name="pwd" placeholder="Password">
+				<input class="form-control" v-model="user.conf" type="text" name="conf" placeholder="Confirmación">
+				<input class="btn btn-success" type="button" value="Grabar" onclick = "javascript:grabaNuevoUser()">
+			</form>
+
+			<form	v-else-if="edit_t === 'FLAT'" class="form" action="javascript:grabaNuevoPiso()">
+				<input class="form-control" v-model="flat.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="flat.obj.codPiso" type="text" name="codPiso"	placeholder="Código Piso">
+				<input class="form-control" v-model="flat.obj.direcc" type="text" name="direcc" placeholder="Dirección">
+				<input class="form-control" v-model="flat.obj.cpostal" type="text" name="cpostal"	placeholder="Cód. postal">
+				<input class="form-control" v-model="flat.obj.poblac" type="text" name="email"	placeholder="Población">
+				<input class="form-control" v-model="flat.obj.prov" type="text" name="telef"	placeholder="Provincia">
+				<input class="form-control" type="submit" value="Grabar">
+				<input class="btn btn-danger" type="button" value="Reset Gastos" @click = "resetFlat(flat.id0)">
+			</form>
+
+			<form	v-else-if="edit_t === 'ROOM'" class="form" action="javascript:grabaNuevoRoom()">
+				<input class="form-control" v-model="room.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="room.obj.codRoom" type="text" name="codRoom"	placeholder="Cód. habitación">
+				<input class="form-control" v-model="room.obj.m2" type="text" name="m2" placeholder="Superficie">
+				<input class="form-control" v-model="room.obj.precio" type="text" name="precio"	placeholder="Precio">
+				<input class="form-control" v-model="room.obj.gastos" type="text" name="gastos"	placeholder="Gastos">
+				<input class="btn btn-success" type="submit" value="Grabar">
+				<input class="btn btn-danger" type="button" value="Borrar" onclick = "javascript:borraBookings()">
+				<input class="btn btn-danger" type="button" value="Reset" @click = "resetRoom(room.id0)">
+			</form>
+			<form	v-else-if="edit_t === 'GASTO'" class="form" action="javascript:grabaNuevoGasto()">
+				<select class="form-control" @change="handleChange">
+					<option v-for="opcion in opciones" :value="opcion.cod">{{ opcion.tag }}</option>
+				</select>
+				<input class="form-control" v-model="gasto.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="gasto.obj.tipo" type="hidden" name="tipo"	placeholder="Cod. gasto">
+				<input class="form-control" v-model="fechas[0]" type="text" name="m2" placeholder="Fecha Ini">
+				<input class="form-control" v-model="fechas[1]" type="text" name="precio"	placeholder="Fecha Fin">
+				<input class="form-control" v-model="fechas[2]" type="text" name="precio"	placeholder="Fecha Valor">
+				<input class="form-control" v-model="gasto.obj.euros" type="text" name="gastos"	placeholder="Euros">
+				<input class="btn btn-success" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'GASTO_T'" class="form" action="javascript:grabaNuevoGastoT()">
+				<input v-model="gasto_t.obj.visible"  @click="chkClick" type="checkbox" name="ver"> Mostrar en listado?
+				<input class="form-control" v-model="gasto_t.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="gasto_t.cod" type="text" name="cod"	placeholder="Cod. Tipo">
+				<input class="form-control" v-model="gasto_t.obj.maskCSV" type="text" name="gastos"	placeholder="Patrón CSV">
+				<input class="btn btn-success" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'VISTA'" class="form" action="javascript:setVistaGastos()">
+				<select  class="form-control" v-model="valores" multiple>
+					<option v-for="opc in opciones" :selected="opc.visible" :value="opc.cod">{{ opc.tag }}</option>
+				</select>
+				<input class="btn btn-success" type="submit" value="Grabar">
+			</form>
+
+
+
+		</div>
+		</modal>
+	</div>
+
+</body>
+</html>

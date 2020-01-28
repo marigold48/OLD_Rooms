@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+	<meta name='viewport' content='width=device-width, user-scalable=no'>
+	<title>Rooms</title>
+
+<!--  ==================== REMOTO ================== -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+	<link rel="stylesheet" href="css/vueModal.css">
+
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+	<script type='text/javascript' src='k1/libK1_Ajax.js'></script>
+	<script type='text/javascript' src='k1/libK1_Random.js'></script>
+	<script type='text/javascript' src='k1/libK1_Topol.js'></script>
+	<script type='text/javascript' src='k1/libK1_Clases.js'></script>
+	<script type='text/javascript' src='k1/libK1_Utils.js'></script>
+	<script type='text/javascript' src='k1/libK1_Algebra.js'></script>
+	<script type='text/javascript' src='k1/libK1_Sesion.js'></script>
+
+
+	<script type='text/javascript' src='js/rooms_VGlob.js'></script>
+	<script type='text/javascript' src='js/rooms_vApps.js'></script>
+	<script type='text/javascript' src='js/rooms_Ajax.js'></script>
+	<script type='text/javascript' src='js/rooms_Random.js'></script>
+	<script type='text/javascript' src='js/rooms_Clases.js'></script>
+	<script type='text/javascript' src='js/rooms_FSM.js'></script>
+
+	<script type='text/javascript' src='js/pkg_Grupo.js'></script>
+	<script type='text/javascript' src='js/pkg_Owner.js'></script>
+	<script type='text/javascript' src='js/pkg_Flats.js'></script>
+	<script type='text/javascript' src='js/pkg_Rooms.js'></script>
+	<script type='text/javascript' src='js/pkg_Pactos.js'></script>
+	<script type='text/javascript' src='js/pkg_Money.js'></script>
+
+	<script type='text/javascript' src='js/mod_booking.js'></script>
+	 <script>
+	 	function toggleModoRandom(){
+	 		vgk.appModo.toggle();
+	 	}
+	</script>
+</head>
+<body onload='initBooking()'>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Rooms</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li class="active"><a href="index.html">Home</a></li>
+
+	      <li class="dropdown">
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Buscar
+	        <span class="caret"></span></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="javascript:buscarPorOwner()">Nombre propietario</a></li>
+	          <li><a href="javascript:buscarPorPiso()">Dirección flat</a></li>
+	        </ul>
+	      </li>
+
+	      <li class="dropdown" >
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Modo
+	        <span class="caret"></span></a>
+	        <ul id="appModo" class="dropdown-menu">
+	          <li><a href="javascript:toggleModoRandom()"><i class="fa fa-check" v-if="!random"></i> Manual</a></li>
+	          <li><a href="javascript:toggleModoRandom()"><i class="fa fa-check" v-if="random"></i> Random</a></li>
+	        </ul>
+	      </li>
+
+	      <li><a href="javascript:syncGrupo()"><i class="fa fa-refresh"></i></a></li>
+
+	    </ul>
+
+	    <ul class="nav navbar-nav navbar-right">
+		  	<!-- li class="active"><a href="adminStaff.html"><i class="fa fa-users">&nbsp;</i>Equipo</a></li -->
+	      <!-- li>&nbsp;&nbsp;</li-->
+
+	      <li class="dropdown">
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+	        <span class="caret"></span></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="javascript:cambiaPwdStaff()">Cambiar password</a></li>
+	          <li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+	        </ul>
+	      </li>
+	    </ul>
+	  </div>
+	</nav> 
+
+	<div class="container">
+		<div class="row">
+
+
+		<div class="col-md-12">
+		<div id="lstGrupos"></div>
+		<div id="lstOwners"></div>
+		<div id="lstFlats"></div>
+		<div id="h3Owners"></div>
+		<div id="h3Flats"></div>
+		<div id="divOwners" style="border:2px gray solid;margin:8px">
+			<table v-if="owners.length > 0" class="table">
+				<tr v-for="owner in owners" >
+					<td> {{owner.tag}}</td>
+					<td>{{owner.obj.nombre}}</td>
+					<td>{{owner.obj.apell}}</td>
+					<td>{{owner.obj.email}}</td>
+					<td>{{owner.obj.telef}}</td>
+				</tr>
+			</table>
+			<span v-else>No hay Propietarios en este grupo</span>
+		</div>
+
+		<div id="divFlats" style="border:2px gray solid;margin:8px">
+			<table v-if="flats.length > 0" class="table">
+				<tr v-for="flat in flats" >
+					<td v-on:click.stop="showRooms(flat.id0)">{{flat.tag}}</td>
+					<td><b>{{flat.obj.direcc}}</b></td>
+					<td>{{flat.obj.poblac}}</td>
+					<td>{{flat.obj.prov}}</td>
+				</tr>
+			</table>
+			<span v-else>No hay Flats de este propietario</span>
+		</div>
+
+		<h4 id="h3Rooms" style="display:inline-block">Habitaciones de <b>{{flat}}</b></h4>
+		<div id="divRooms" style="border:2px gray solid;margin:8px">
+			<table v-if="rooms.length > 0" class="table">
+				<tr v-for="room in rooms" >
+					<td v-if="room.obj.state.cod == 'FREE'"  style="width:30px;color:#aaffaa" > <i class="fa fa-circle"></i></td>
+					<td v-else-if="room.obj.state.cod == 'RENT'" style="width:30px;color:#ffaaaa" > <i class="fa fa-circle"></i></td>
+					<td v-else  style="width:30px;color:blue"> <i class="fa fa-circle"></i></td>
+					<td v-on:click.stop="showPactos(room.id0)">{{room.tag}}</td>
+					<td>{{room.obj.state.tag}}</td>
+					<td>{{room.obj.codRoom}}</td>
+					<td>{{room.obj.m2}}</td>
+					<td>{{room.obj.precio}}</td>
+					<td>{{room.obj.gastos}}</td>
+					<td><button class="btn pull-right btn-edit"  v-on:click.stop="editRoom(room.id0)"><i class="fa fa-pencil"> </i></button></td>
+				</tr>
+			</table>
+			<span v-else>No hay Habitaciones de este flat</span>
+		</div>
+
+		<div>
+			<h4 id="h3Pactos" style="display:inline-block">Contratos de <b>{{room}}</b></h4>
+			<span id="morePactos">
+				<button class="btn btn-success pull-right btn-mas" onclick="hookNuevoPacto()"><i class="fa fa-plus"> </i></button>
+				<button v-if="modo == 'VIVOS'" class="btn btn-success pull-right btn-mas" v-on:click.stop="verTodos()"><i class="fa fa-angle-down"> </i> Todos</button>
+				<button v-else-if="modo == 'TODOS'" class="btn btn-success pull-right btn-mas" v-on:click.stop="verVivos()"><i class="fa fa-angle-up"> </i> Activos</button>
+			</span>
+		</div>
+		<div id="divPactos" style="border:2px gray solid;margin:8px">
+			<table v-if="pactos.length > 0" class="table">
+				<tr v-for="pacto in pactos" >
+					<td>{{pacto.tag}}</td>
+					<td>{{pacto.obj.roomer.obj.nombre}}</td>
+					<td>{{pacto.obj.roomer.obj.apell}}</td>
+					<td>{{pacto.obj.periodo.toStr_I()}}</td>
+					<td>{{pacto.obj.periodo.toStr_F()}}</td>
+					<td>{{pacto.obj.state.tag}}</td>
+					<td  style="text-align: right;">
+						<button class="btn btn-edit" v-on:click.stop="cambiaState(pacto.id0)"><i class="fa fa-bolt"></i></button>
+						<button class="btn pull-right btn-edit"  v-on:click.stop="editPacto(pacto.id0)"><i class="fa fa-pencil"> </i></button>
+					</td>
+			 	</tr>
+			</table>
+			<span v-else>No hay Contratos de esta habitación</span>
+		</div>
+
+
+		</div> <!-- md8 -->
+		</div> <!-- row -->
+	</div> <!-- container -->
+
+
+	<!-- template for the modal component -->
+	<script type="text/x-template" id="modal-template">
+		<transition name="modal">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+		</div> <!--container -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script>
+
+	<!-- template for the modal component BIG -->
+	<script type="text/x-template" id="modal-template-big">
+		<transition name="modal-big">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container-big">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+
+		</div> <!--container -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script>
+
+
+
+	<!-- appEdit -->
+	<div id="appEdit">
+		<modal v-if="showModal" @close="showModal = false">
+
+		<h3 v-if="edit_t === 'STATE'" slot="header">Estado</h3>
+		<h3 v-else-if="edit_t === 'GRUPO'" slot="header">Nombre del grupo?</h3>
+		<h3 v-else-if="edit_t === 'OWNER'" slot="header">Propietario</h3>
+		<h3 v-else-if="edit_t === 'USER'" slot="header">Usuario</h3>
+		<h3 v-else-if="edit_t === 'PISO'" slot="header">Propiedad</h3>
+		<h3 v-else-if="edit_t === 'ROOM'" slot="header">Habitación</h3>
+		<h3 v-else slot="header">Desconocido</h3>
+
+		<div slot="body">
+			<form	v-if="edit_t === 'STATE'" class="form" action="javascript:grabaNuevoState()">
+				<select class="form-control" @change="handleChange">
+					<option v-for="opcion in opciones" :value="opcion.cod">{{ opcion.tag }}</option>
+				</select>
+				<input type="submit" value="Grabar">
+			</form>
+
+			<form	v-if="edit_t === 'GRUPO'" class="form" action="javascript:grabaNuevoGrupo()">
+				<input v-model="grupo" type="text" name="grupo">
+				<input type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'OWNER'" class="form" action="javascript:grabaNuevoOwner()">
+				<input class="form-control" v-model="owner.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="owner.obj.nombre" type="text" name="nombre" placeholder="Nombre">
+				<input class="form-control" v-model="owner.obj.apell" type="text" name="apell"	placeholder="Apellidos">
+				<input class="form-control" v-model="owner.obj.email" type="text" name="email"	placeholder="e-Mail">
+				<input class="form-control" v-model="owner.obj.telef" type="text" name="telef"	placeholder="Telefono">
+				<input class="form-control" v-model="owner.obj.codResa" type="text" name="codResa"	placeholder="Código RESA">
+				<input class="form-control" v-model="owner.obj.codIBAN" type="text" name="codIBAN"	placeholder="IBAN">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'USER'" class="form" action="javascript:grabaNuevoUser()">
+				<input v-model="user._id" type="hidden" name="_id">
+				<input v-model="user.id0" type="hidden" name="id0">
+				<input v-model="user.md5" type="hidden" name="md5">
+				<input class="form-control" v-model="user.usr" type="text" name="usr"	placeholder="Usuario">
+				<input class="form-control" v-model="user.pwd" type="text" name="pwd" placeholder="Password">
+				<input class="form-control" v-model="user.conf" type="text" name="conf" placeholder="Confirmación">
+				<input class="btn btn-success" type="button" value="Grabar" onclick = "javascript:grabaNuevoUser()">
+			</form>
+
+			<form	v-else-if="edit_t === 'PISO'" class="form" action="javascript:grabaNuevoPiso()">
+				<input class="form-control" v-model="flat.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="flat.obj.codPiso" type="text" name="codPiso"	placeholder="Código Piso">
+				<input class="form-control" v-model="flat.obj.direcc" type="text" name="direcc" placeholder="Dirección">
+				<input class="form-control" v-model="flat.obj.cpostal" type="text" name="cpostal"	placeholder="Cód. postal">
+				<input class="form-control" v-model="flat.obj.poblac" type="text" name="email"	placeholder="Población">
+				<input class="form-control" v-model="flat.obj.prov" type="text" name="telef"	placeholder="Provincia">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'ROOM'" class="form" action="javascript:grabaNuevoRoom()">
+				<input class="form-control" v-model="room.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="room.obj.codRoom" type="text" name="codRoom"	placeholder="Cód. habitación">
+				<input class="form-control" v-model="room.obj.m2" type="text" name="m2" placeholder="Superficie">
+				<input class="form-control" v-model="room.obj.precio" type="text" name="precio"	placeholder="Precio">
+				<input class="form-control" v-model="room.obj.gastos" type="text" name="gastos"	placeholder="Gastos">
+				<input class="btn btn-success" type="submit" value="Grabar">
+				<input class="btn btn-danger" type="button" value="Borrar" onclick = "javascript:borraBookings()">
+				<input class="btn btn-danger" type="button" value="Reset" @click = "resetRoom(room.id0)">
+			</form>
+		</div>
+		</modal>
+	</div>
+
+
+	<!-- appEditBig -->
+	<div id="appEditBig">
+		<modal-big v-if="showModal" @close="showModal = false">
+
+		<h3 v-if="edit_t === 'PACTO'" slot="header">Contrato</h3>
+		<h3 v-else slot="header">Desconocido</h3>
+
+		<div slot="body">
+		<div class="row">
+		<form class="form-horizontal" action="javascript:grabaNuevoPacto()">
+
+		<div class="col-xs-6">
+		<fieldset>
+		<legend>Inquilino</legend>
+
+		<div class="form-group"> <!-- Tag -->
+		<label for="nombre" class="col-xs-4 control-label">Alias</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.tag" type="text" name="tag"	placeholder="Alias">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		<div class="form-group"> <!-- Nombre -->
+		<label for="nombre" class="col-xs-4 control-label">Nombre</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.obj.roomer.obj.nombre" type="text" name="nombre"	placeholder="Nombre">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		<div class="form-group"> <!-- Apellidos -->
+		<label for="nombre" class="col-xs-4 control-label">Apellidos</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.obj.roomer.obj.apell" type="text" name="apell"	placeholder="Apellidos">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		<div class="form-group"> <!-- Dirección -->
+		<label for="nombre" class="col-xs-4 control-label">Dirección</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.obj.roomer.obj.direcc" type="text" name="direcc"	placeholder="Dirección">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		</fieldset>
+		</div> <!--xs-6 -->
+
+
+		<div class="col-xs-6">
+		<fieldset>
+		<legend>Datos</legend>
+
+		<div class="form-group">
+		<label for="precio" class="col-xs-4 control-label gray">Estado</label>
+		<div class="col-xs-8">
+		<!--input class="btn" v-model="pacto.obj.state" type="text" name="state"	placeholder="Estado" -->
+		<span class="form-control">{{pacto.obj.state.tag}}</span>
+		<!--input class="btn btn-warning" type="button" value="Cambiar" onclick = "javascript:cambiaStatePacto()" -->
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		<div class="form-group">
+		<label for="precio" class="col-xs-4 control-label">Precio</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.obj.precio" type="text" name="precio"	placeholder="Alquiler">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		<div class="form-group">
+		<label for="gastos" class="col-xs-4 control-label">Gastos</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.obj.gastos" type="text" name="gastos"	placeholder="Gastos">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		<div class="form-group">
+		<label for="fianza" class="col-xs-4 control-label">Fianza</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="pacto.obj.fianza" type="text" name="fianza"	placeholder="Fianza">
+		</div> <!--xs-8 -->
+		</div> <!-- group -->
+
+		</fieldset>
+		</div> <!--xs-6 -->
+
+		<div class="col-xs-6">
+		<fieldset>
+		<legend>Periodo</legend>
+
+		<div class="form-group">
+		<label for="uta1" class="col-xs-4 control-label">F. inicio</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="fechas[0]" type="text" name="uta1"	placeholder="F. inicio">
+		</div> <!--xs-3 -->
+		</div> <!-- group -->
+
+		<div class="form-group">
+		<label for="uta1" class="col-xs-4 control-label">F. final</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="fechas[1]" type="text" name="tau1"	placeholder="F.final">
+		</div> <!--xs-4 -->
+		</div> <!-- group -->
+		</fieldset>
+		</div> <!--xs-6 -->
+
+		<div class="col-xs-6">
+		<fieldset>
+		<legend>Check In/Out</legend>
+		<div class="form-group">
+		<label for="uta1" class="col-xs-4 control-label">Check-in</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="fechas[2]" type="text" name="uta2"	placeholder="Check-in">
+		</div> <!--xs-4 -->
+		</div> <!-- group -->
+
+		<div class="form-group">
+		<label for="uta1" class="col-xs-4 control-label">Check-out</label>
+		<div class="col-xs-8">
+		<input class="form-control" v-model="fechas[3]" type="text" name="tau2"	placeholder="Check-out">
+		</div> <!--xs-4 -->
+		</div> <!-- group -->
+
+		</fieldset>
+		</div> <!--xs-12 -->
+				<input class="btn btn-default" type="submit" value="Grabar">
+
+		</form>
+
+
+		</div>
+		</modal-big>
+	</div>
+
+</body>
+</html>

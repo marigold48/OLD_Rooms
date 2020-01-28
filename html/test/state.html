@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+	<meta name='viewport' content='width=device-width, user-scalable=no'>
+
+<!--  ==================== REMOTO ==================  -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+	<link rel="stylesheet" href="css/vueModal.css">
+
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+	<script type='text/javascript' src='k1/libK1_Ajax.js'></script>
+	<script type='text/javascript' src='k1/libK1_Random.js'></script>
+	<script type='text/javascript' src='k1/libK1_Topol.js'></script>
+	<script type='text/javascript' src='k1/libK1_Clases.js'></script>
+	<script type='text/javascript' src='k1/libK1_Utils.js'></script>
+	<script type='text/javascript' src='k1/libK1_Algebra.js'></script>
+	<script type='text/javascript' src='k1/libK1_Sesion.js'></script>
+
+	<script type='text/javascript' src='js/rooms_VGlob.js'></script>
+	<script type='text/javascript' src='js/rooms_vApps.js'></script>
+	<script type='text/javascript' src='js/rooms_Ajax.js'></script>
+	<script type='text/javascript' src='js/rooms_Random.js'></script>
+	<script type='text/javascript' src='js/rooms_Clases.js'></script>
+	<script type='text/javascript' src='js/rooms_Sesion.js'></script>
+
+	<script type='text/javascript' src='js/pkg_Grupo.js'></script>
+	<script type='text/javascript' src='js/pkg_Owner.js'></script>
+	<script type='text/javascript' src='js/pkg_Flats.js'></script>
+	<script type='text/javascript' src='js/pkg_Rooms.js'></script>
+
+	<script type='text/javascript' src='js/mod_state.js'></script>
+	<title>Grupos</title>
+	 <script>
+	 	function toggleModoRandom(){
+	 		vgk.appModo.toggle();
+	 	}
+	</script>
+</head>
+<body onload='initState()'>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Grupos</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li class="active"><a href="index.html">Home</a></li>
+
+	      <li class="dropdown">
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Buscar
+	        <span class="caret"></span></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="javascript:buscarPorOwner()">Nombre propietario</a></li>
+	          <li><a href="javascript:buscarPorFlat()">Dirección flat</a></li>
+	        </ul>
+	      </li>
+
+	      <li class="dropdown" >
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Modo
+	        <span class="caret"></span></a>
+	        <ul id="appModo" class="dropdown-menu">
+	          <li><a href="javascript:toggleModoRandom()"><i class="fa fa-check" v-if="!random"></i> Manual</a></li>
+	          <li><a href="javascript:toggleModoRandom()"><i class="fa fa-check" v-if="random"></i> Random</a></li>
+	        </ul>
+	      </li>
+
+	    </ul>
+
+	    <ul class="nav navbar-nav navbar-right">
+	      <li class="dropdown">
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+	        <span class="caret"></span></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="javascript:cambiaPwdUser()">Cambiar password</a></li>
+	          <li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+	        </ul>
+	      </li>
+	    </ul>
+	  </div>
+	</nav> 
+
+	<div class="container">
+		<div class="row">
+		<div class="col-md-3">
+
+		<div id="lstGrupos">
+			<h3 style="display:inline-block"> Grupos</h3>
+			<button @click="nuevoGrupo()" class="btn btn-success pull-right btn-mas"><i class="fa fa-plus"> </i></button>
+	
+			<ul class="list-group">
+				<li class="list-group-item" v-for="item in lista">
+				 <span @click="getUnGrupo(item._id)">{{ item.meta.tag }}  ({{item.meta.org}})</span>
+				 <button @click="borraGrupo(item._id)" class="btn btn-warning pull-right btn-mas"><i class="fa fa-trash"> </i></button>
+				</li>
+			</ul>
+		</div>
+
+		<div id="lstPactos"></div>
+
+		<h3>Propietarios</h3>
+
+		<div id="lstOwners">
+		<ul class="list-group">
+		<li class="list-group-item btn" v-for="item in lista">
+			<span @click="cargaOwner(item._id,item.id0)"><i>{{ item.tag }}</i>: &nbsp;{{item.nom}} </span>
+		</li>
+		</ul>
+		</div>
+
+		<h3>Propiedades</h3>
+
+		<div id="lstFlats">
+		<ul class="list-group">
+		<li class="list-group-item btn" v-for="item in lista">
+			<span	 @click="cargaFlat(item._id,item.id0)"><i>{{ item.tag }}</i>: &nbsp;{{item.nom}} </span>
+		</li>
+		</ul>
+		</div>
+
+
+		</div> <!--md4 -->
+
+
+		<div class="col-md-9">
+		<div id="h3Owners">
+			<h3  style="display:inline-block">Propietarios del grupo <b>{{grupo}}</b></h3>
+			<button @click="creaNuevoOwner()" class="btn btn-success pull-right btn-mas" ><i class="fa fa-plus"> </i></button>
+		</div>
+		<div id="divOwners" style="border:2px gray solid;margin:8px">
+			<table v-if="owners.length > 0" class="table">
+				<tr v-for="owner in owners" >
+					<td v-on:click.stop="showFlats(owner.id0)">{{owner.tag}}</td>
+					<td>{{owner.obj.nombre}}</td>
+					<td>{{owner.obj.apell}}</td>
+					<td>{{owner.obj.email}}</td>
+					<td>{{owner.obj.telef}}</td>
+					<td style="text-align: right;">
+						<button class="btn btn-edit" v-on:click.stop="goBooking(owner.id0)"><i class="fa fa-bolt"></i></button>
+						<button class="btn btn-edit" v-on:click.stop="editUsrOwner(owner.id0)"><i class="fa fa-user"></i></button>
+						<button class="btn btn-edit" v-on:click.stop="editOwner(owner.id0)"><i class="fa fa-pencil"></i></button>
+					</td>
+				</tr>
+			</table>
+			<span v-else>No hay Propietarios en este grupo</span>
+		</div>
+
+		<div id="h3Flats">
+			<h3  style="display:inline-block">Pisos de <b>{{owner}}</b></h3>
+			<button @click="creaNuevoFlat()" class="btn btn-success pull-right btn-mas" ><i class="fa fa-plus"> </i></button>
+		</div>
+		<div id="divFlats" style="border:2px gray solid;margin:8px">
+			<table v-if="flats.length > 0" class="table">
+				<tr v-for="flat in flats" >
+					<td v-on:click.stop="showRooms(flat.id0)">{{flat.tag}}</td>
+					<td>{{flat.obj.codFlat}}</td>
+					<td>{{flat.obj.direcc}}</td>
+					<td>{{flat.obj.poblac}}</td>
+					<td>{{flat.obj.prov}}</td>
+					<td style="text-align: right;">
+						<button class="btn btn-edit" v-on:click.stop="editFlat(flat.id0)"><i class="fa fa-pencil"></i></button>
+					</td>
+				</tr>
+			</table>
+			<span v-else>No hay Pisos de este propietario</span>
+		</div>
+
+		<div id="h3Rooms">
+			<h3 style="display:inline-block">Habitaciones de <b>{{flat}}</b></h3>
+			<button @click="creaNuevoRoom()" class="btn btn-success pull-right btn-mas"><i class="fa fa-plus"> </i></button>
+		</div>
+		<div id="divRooms" style="border:2px gray solid;margin:8px">
+			<table v-if="rooms.length > 0" class="table">
+				<tr v-for="room in rooms" >
+					<td >{{room.tag}}</td>
+					<td>{{room.obj.codRoom}}</td>
+					<td>{{room.obj.m2}}</td>
+					<td>{{room.obj.precio}}</td>
+					<td>{{room.obj.gastos}}</td>
+					<td><button class="btn pull-right btn-edit"  v-on:click.stop="editRoom(room.id0)"><i class="fa fa-pencil"> </i></button></td>
+				</tr>
+			</table>
+			<span v-else>No hay Habitaciones de este piso</span>
+		</div>
+
+
+
+		</div> <!-- md8 -->
+		</div> <!-- row -->
+	</div> <!-- container -->
+
+
+	<!-- template for the modal component -->
+	<script type="text/x-template" id="modal-template">
+		<transition name="modal">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+
+		</div> <!--container -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script>
+
+	<!-- template for the modal component BIG -->
+	<script type="text/x-template" id="modal-template-big">
+	</script >
+
+
+
+	<!-- appEdit -->
+	<div id="appEdit">
+		<modal v-if="showModal" @close="showModal = false">
+
+		<h3 v-if="edit_t === 'USER'" slot="header">Usuario</h3>
+		<h3 v-else-if="edit_t === 'GRUPO'" slot="header">Nombre del grupo?</h3>
+		<h3 v-else-if="edit_t === 'OWNER'" slot="header">Propietario</h3>
+		<h3 v-else-if="edit_t === 'FLAT'" slot="header">Propiedad</h3>
+		<h3 v-else-if="edit_t === 'ROOM'" slot="header">Habitación</h3>
+		<h3 v-else slot="header">Desconocido</h3>
+
+		<div slot="body">
+			<form	v-if="edit_t === 'USER'" class="form" action="javascript:grabaNuevoUser()">
+				<input v-model="user._id" type="hidden" name="_id">
+				<input v-model="user.id0" type="hidden" name="id0">
+				<input v-model="user.md5" type="hidden" name="md5">
+				<input class="form-control" v-model="user.usr" type="text" name="usr"	placeholder="Usuario">
+				<input class="form-control" v-model="user.pwd" type="text" name="pwd" placeholder="Password">
+				<input class="form-control" v-model="user.conf" type="text" name="conf" placeholder="Confirmación">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'GRUPO'" class="form" action="javascript:grabaNuevoGrupo()">
+				<input v-model="grupo" type="text" name="grupo">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'OWNER'" class="form" action="javascript:grabaNuevoOwner()">
+				<input class="form-control" v-model="owner.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="owner.obj.nombre" type="text" name="nombre" placeholder="Nombre">
+				<input class="form-control" v-model="owner.obj.apell" type="text" name="apell"	placeholder="Apellidos">
+				<input class="form-control" v-model="owner.obj.email" type="text" name="email"	placeholder="e-Mail">
+				<input class="form-control" v-model="owner.obj.telef" type="text" name="telef"	placeholder="Telefono">
+				<input class="form-control" v-model="owner.obj.codOwner" type="text" name="codResa"	placeholder="Código">
+				<input class="form-control" v-model="owner.obj.codIBAN" type="text" name="codIBAN"	placeholder="IBAN">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+
+			<form	v-else-if="edit_t === 'FLAT'" class="form" action="javascript:grabaNuevoFlat()">
+				<input class="form-control" v-model="flat.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="flat.obj.codFlat" type="text" name="codFlat"	placeholder="Código Flat">
+				<input class="form-control" v-model="flat.obj.direcc" type="text" name="direcc" placeholder="Dirección">
+				<input class="form-control" v-model="flat.obj.cpostal" type="text" name="cpostal"	placeholder="Cód. postal">
+				<input class="form-control" v-model="flat.obj.poblac" type="text" name="email"	placeholder="Población">
+				<input class="form-control" v-model="flat.obj.prov" type="text" name="telef"	placeholder="Provincia">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'ROOM'" class="form" action="javascript:grabaNuevoRoom()">
+				<input class="form-control" v-model="room.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="room.obj.codRoom" type="text" name="codRoom"	placeholder="Cód. habitación">
+				<input class="form-control" v-model="room.obj.m2" type="text" name="m2" placeholder="Superficie">
+				<input class="form-control" v-model="room.obj.precio" type="text" name="precio"	placeholder="Precio">
+				<input class="form-control" v-model="room.obj.gastos" type="text" name="gastos"	placeholder="Gastos">
+				<input class="btn btn-success" type="submit" value="Grabar">
+			</form>
+		</div>
+		</modal>
+	</div> <!-- appEdit -->
+	<div id="appEditBig"></div>
+
+
+
+</body>
+</html>

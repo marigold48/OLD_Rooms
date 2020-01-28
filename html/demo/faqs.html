@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta tag='viewport' content='width=device-width, item-scalable=no'>
+<!--	==================== REMOTO ================== -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="css/vueModal.css">
+
+<style>
+    .faqHeader {
+        font-size: 27px;
+        margin: 20px;
+    }
+
+    .panel-heading [data-toggle="collapse"]:after {
+        font-family: 'Glyphicons Halflings';
+        content: "\e072"; /* "play" icon */
+        float: right;
+        color: #F58723;
+        font-size: 18px;
+        line-height: 22px;
+        /* rotate "play" icon from > (right arrow) to down arrow */
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+    }
+
+    .panel-heading [data-toggle="collapse"].collapsed:after {
+        /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg);
+        color: #454444;
+    }
+</style>
+
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+    <script type='text/javascript' src='lib/libBase64.js'></script>
+    <script type='text/javascript' src='k1/kernel1.js'></script>
+    <script type='text/javascript' src='js/bundleRooms.js'></script>
+
+	<script type='text/javascript' src='js/mod_stocks.js'></script>
+
+<title>Informacion</title>
+
+</head>
+<body onload="javascript:initStocks()">
+
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Inventario</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="index.html">Home</a></li>
+
+
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+					<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:cambiaPwdUser()">Cambiar password</a></li>
+						<li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav> 
+
+
+<div class="container">
+      <div class="blog-header">
+        <h1 class="blog-title">Preguntas frecuentes</h1>
+      </div>
+
+
+    <div class="alert alert-warning alert-dismissible" role="alert">
+        <p>Este apartado refleja la información relevante acerca del piso.</p>
+        <p>Evidentemente, las respuestas no establecen normas, sino que son sugerencias</p>
+        <p>Envía un mail con tus preguntas, y si son interesantes, las publicaremos aquí.</p>
+    </div>
+
+    <br />
+    <div class="panel-group" id="accordion">
+        <div class="faqHeader">General</div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse1">¿Porqué se llama Proyecto Marigold?</a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Viene de la película <b>El exótico Hotel Marigold</b>, que trata de un grupo de jubilados ingleses que viajan a la India a vivir en un curioso hotel.<br> 
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse2">¿Cuando y como surgió el proyecto? </a>
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Fué en agosto del 2013, en una sobremesa familiar. Allí se comentó la idea por primera vez, y pareció un bonito proyecto, al que dedicarle horas para hacerlo viable.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse3">¿Pero, hay hoteles en alquiler? </a>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Efectivamente. Hay varias empresas especializadas, que se anuncian en la Web, ofreciendo Hoteles en alquiler.
+                    <ul>
+                        <li><a href="http://www.milanuncios.com/traspasos-de-hostales-y-hoteles/" target="_blank">Milanuncios</a></li>
+                        <li><a href="http://www.segundamano.es/negocios-barcelona/hotel.htm?ca=8_s&th=1&od=1" target="_blank">Segundamano</a></li>
+                        <li><a href="http://www.hosteleros.net/establecimientos_hoteles_espana.html" target="_blank">Hosteleros</a></li>
+                        <li><a href="http://www.starsfour.com/es/alquilar-hoteles/alquilar-hoteles-en-espana" target="_blank">StarsFour</a></li>
+                        <li><a href="http://www.christie.com/es" target="_blank">Christie + Co.</a></li>
+                        <li><a href="http://es.negocius.com/traspaso-hoteles_nl405_ttr.html" target="_blank">Negocius</a></li>
+                   </ul>
+                    Además hay muchas webs de agrupaciones hoteleras, para consultar la disponibilidad de establecimientos.
+                </div>
+            </div>
+        </div>
+
+    
+        <div class="faqHeader">Funcionamiento comunidad</div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">¿Habría reuniones?</a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Por supuesto. En una comunidad intencional, la filosofía base se apoya en la participación de los socios. 
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTen">¿Cada cuánto? </a>
+                </h4>
+            </div>
+            <div id="collapseTen" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Deberían ser frecuentes, pero no agobiantes. En algunas ecoaldeas suelen reunirse una vez por semana, pero tal vez dos veces al mes sean suficientes.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEleven">¿Habría un lider, o presidente o similar? </a>
+                </h4>
+            </div>
+            <div id="collapseEleven" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Una vez constituida la comunidad, para pasar a vivir en el hotel elegido, algunos miembros deberían asumir roles de organización, (rotatorios) para gestionar temas tales como:
+                    <ul>
+                        <li>Proveedores</li>
+                        <li>Empleados</li>
+                        <li>Suministros</li>
+                        <li>Mantenimiento</li>
+                    </ul>
+                    Esta persona o personas serán elegidas según los estatutos que la Cooperativa Marigold especifique, en su momento
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwuelve">¿Se tendría relación de algún tipo con la Cooperativa Marigold? </a>
+                </h4>
+            </div>
+            <div id="collapseTwuelve" class="panel-collapse collapse">
+                <div class="panel-body">
+                    La Cooperativa Marigold dará cobertura principalmente a la contratación de Hoteles, Proveedores, Empleados y con la comunidad creada. Sería natural que una vez en marcha el Hotel, las decisiones del día a día fueran tomadas por el propio grupo de socios que lo ocupa, excepción hecha de aspectos que afecten al contrato suscrito con la propiedad del hotel.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseNine">¿Habría un mínimo de convivencia "obligatoria"? </a>
+                </h4>
+            </div>
+            <div id="collapseNine" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Este aspecto debería acordarse por los socios que ocupan cada hotel. Incluso podría haber un grupo que lo haga, y otros participantes decidan no unirse a esas cenas, comidas o eventos. Después de todo, se trata de vivir en un hotel, tal cual
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven">Pueden realizar los socios tareas, para economizar?</a>
+                </h4>
+            </div>
+            <div id="collapseSeven" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Hay muchas razones para que eso <strong>NO</strong> suceda:
+                    <ul>
+                        <li>No todos tendrían la misma disponibilidad.</li>
+                        <li>No todos tendrían la misma disposición.</li>
+                        <li>Se haría compleja la gestión de turnos, equitativamente hablando.</li>
+                        <li>Podría dar lugar a conflictos interpersonales, por supuestos agravios comparativos.</li>
+                    </ul>
+                    De hecho, uno de los aspectos más diferenciadores del Proyecto Marigold, se basa en externalizar las tareas diarias, para que l@s soci@s vivan como en un hotel. La gran diferencia es que la comunidad decide sobre alimentación, limpieza, equipamientos, etc etc ...
+                </div>
+            </div>
+        </div>
+    
+
+
+
+        <div class="faqHeader">Aspectos sociales</div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">¿Habría relación con otros hoteles Marigold?</a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="panel-body">
+                     Si. Deberían celebrarse reuniones para aprender unos de otros.<br>
+                     Al fin y al cabo, es una propuesta novedosa y las comunidades tendrán que ir aprendiendo sobre la marcha<br>
+                     Estará bien poder comunicarse con otros grupos, a ver cómo les va a ellos.<br> Si no es presencialmente, tal vez se pueda hacer a través de la plataforma, o usando algún foro social en la Web. 
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">¿Se colaboraría con cooperativas de consumo? </a>
+                </h4>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Sería deseable que se contratara con empresas de tipo cooperativa, ayudando a fortalecer este tejido económico y social.
+                    <ul>
+                        <li>Proveedores de fruta y verduras ecológicos</li>
+                        <li>Ganaderos que alimentan con pasto a sus animales</li>
+                        <li>Cooperativas verdes de electricidad</li>
+                        <li>Redes independientes de Internet</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">¿Habría interacción con entorno social local?</a>
+                </h4>
+            </div>
+            <div id="collapseFive" class="panel-collapse collapse">
+                <div class="panel-body">
+                    Este podría ser otro de los atractivos que puede tener la propuesta Marigold.<br>
+                    Al tratarse de un grupo de personas que conviven juntas, porque quieren compaginar una vida privada con una vida en comunidad, se podría aprovechar algún espacio amplio, para que funcione parecido a un centro social, con actividades, iniciativas culturales... 
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+	<meta name='viewport' content='width=device-width, user-scalable=no'>
+
+<!--  ==================== REMOTO ================== -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+	<link rel="stylesheet" href="css/vueModal.css">
+
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+	<script type='text/javascript' src='k1/kernel1.js'></script>
+	<script type='text/javascript' src='js/bundleRooms.js'></script>
+
+	<script type='text/javascript' src='js/mod_roomer.js'></script>
+	<title>Roomers</title>
+	 <script>
+
+
+	</script>
+</head>
+<body onload="initRoomer()">
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Inquilino</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <li class="active"><a href="index.html"><i class="fa fa-home"></i>Inicio</a></li>
+
+
+	      <li><a href="javascript:goInventario()"><i class="fa fa-sitemap"></i> Inventario</a></li>
+	      <li><a href="javascript:goInformacion()"><i class="fa fa-info"></i> Informacion</a></li>
+	      <li><a href="javascript:goExpens()"><i class="fa fa-euro"></i> Gastos</a></li>
+	      <li><a href="javascript:goMapa()"><i class="fa fa-globe"></i> Mapa</a></li>
+
+	    </ul>
+
+	    <ul class="nav navbar-nav navbar-right">
+		  	<!-- li class="active"><a href="adminStaff.html"><i class="fa fa-users">&nbsp;</i>Equipo</a></li -->
+	      <!-- li>&nbsp;&nbsp;</li-->
+
+	      <li class="dropdown">
+	        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+	        <span class="caret"></span></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="javascript:cambiaPwdUser()">Cambiar password</a></li>
+	          <li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+	        </ul>
+	      </li>
+	    </ul>
+	  </div>
+	</nav> 
+
+<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div id="divOwners" style="border:2px gray solid;margin:8px">
+					<table v-if="owners.length > 0" class="table">
+						<tr v-for="owner in owners" >
+							<td> {{owner.tag}}</td>
+							<td>{{owner.obj.nombre}}</td>
+							<td>{{owner.obj.apell}}</td>
+							<td>{{owner.obj.email}}</td>
+							<td>{{owner.obj.telef}}</td>
+						</tr>
+					</table>
+					<span v-else>No hay Propietarios en este grupo</span>
+				</div>
+			</div> <!-- md-12 -->
+		</div> <!-- row -->
+
+	<div class="row">
+		<div class="col-md-6">
+			<h3 id="h3Flats">Pisos</h3>
+			<div id="divFlats" style="border:2px gray solid;margin:8px">
+				<table v-if="flats.length > 0" class="table">
+					<tr v-for="flat in flats" >
+						<td v-on:click.stop="showRooms(flat.id0)">{{flat.tag}}</td>
+						<td style="text-align: right;">
+							<button class="btn btn-edit" v-on:click.stop="editPiso(flat.id0)"><i class="fa fa-pencil"></i></button>
+							<button class="btn btn-edit" v-on:click.stop="addGasto(flat.id0)"><b>+€</b></button>
+						</td>
+					</tr>
+				</table>
+				<span v-else>Sin Pisos</span>
+			</div>
+
+			<h3 id="h3Rooms">Habitaciones de {{flat}}</h3>
+			<div id="divRooms" style="border:2px gray solid;margin:8px">
+				<table v-if="rooms.length > 0" class="table">
+					<tr v-for="room in rooms" >
+						<td v-on:click.stop="showPactos(room.id0)">{{room.tag}}</td>
+						<td>{{room.obj.codRoom}}</td>
+						<td>{{room.obj.precio}}</td>
+						<td>{{room.obj.gastos}}</td>
+					</tr>
+				</table>
+				<span v-else>No hay Habitaciones de este flat</span>
+			</div>
+
+			<h3 id="h3Pactos">Contratos de {{room}} </h3>
+			<div id="divPactos" style="border:2px gray solid;margin:8px">
+				<table v-if="pactos.length > 0" class="table">
+					<tr v-for="pacto in pactos" >
+						<td v-on:click.stop="showPagos(pacto.id0)">{{pacto.tag}}</td>
+						<td>{{pacto.obj.state.tag}}</td>
+						<td>{{pacto.obj.periodo.toStr_I()}}</td>
+						<td>{{pacto.obj.periodo.toStr_F()}}</td>
+						<td style="text-align: right;">
+							<button class="btn btn-edit" v-on:click.stop="editUsrRoomer(pacto.id0)"><i class="fa fa-user"></i></button>
+							<button class="btn btn-edit" v-on:click.stop="editPacto(pacto.id0)"><i class="fa fa-pencil"></i></button>
+							<button class="btn btn-edit" v-on:click.stop="addPago(pacto.id0)"><b>+€</b></button>
+						</td>
+				 	</tr>
+				</table>
+				<span v-else>No hay Contratos de esta habitación</span>
+			</div>
+		</div> <!--md6 Owner, Flats, Rooms, Pactos-->
+
+		<div class="col-md-6">
+		  <ul class="nav nav-tabs">
+		    <li class="active"><a data-toggle="tab" href="#gastos">Gastos</a></li>
+		    <li><a data-toggle="tab" href="#pagos">Pagos</a></li>
+		    <li><a data-toggle="tab" href="#import">Import</a></li>
+		    <li><a data-toggle="tab" href="#export">Export</a></li>
+		  </ul>
+
+			<div class="tab-content">
+		    <div id="gastos" class="tab-pane fade in active">
+					<h4 id="h3Gastos" style="display:inline-block"> Gastos del flat {{flat}}</h4>
+					<div id="divGastos" style="border:2px gray solid;margin:8px">
+						<table v-if="gastos.length > 0" class="table">
+							<tr v-for="(gasto,index) in gastos" >
+								<td>{{gasto.tag}}</td>
+								<td>{{gasto.obj.tipo}}</td>
+								<td>{{gasto.obj.periodo.toStr_I()}}</td>
+								<td>{{gasto.obj.periodo.toStr_F()}}</td>
+								<td>{{gasto.obj.euros}} €</td>
+								<td>{{gasto.obj.cargo.toStr_I()}}</td>
+								<td v-on:click.stop="editGasto(gasto.id0)"><i class="fa fa-pencil"></i></td>
+						 	</tr>
+						</table>
+						<span v-else>No hay Gastos de este Piso</span>
+					</div>  <!-- #gastos -->
+				</div><!-- panel gastos -->
+
+		    <div id="pagos" class="tab-pane fade">
+					<h4 id="h3Pagos">Pagos de {{pacto}}</h4>
+					<div id="divPagos" style="border:2px gray solid;margin:8px">
+						<table v-if="pagos.length > 0" class="table">
+							<tr v-for="(pago,index) in pagos" >
+								<td>{{pago.tipo}}</td>
+								<td>{{pago.periodo.toStr_I()}}</td>
+								<td>{{pago.periodo.toStr_F()}}</td>
+								<td>{{pago.euros}} €</td>
+								<td>{{pago.fingr.toStr_I()||'Pdte'}}</td>
+								<td v-on:click.stop="editPago(index)"><i class="fa fa-pencil"></i></td>
+						 	</tr>
+						</table>
+						<span v-else>No hay Pagos de este Contrato</span>
+					</div> <!-- #pagos -->
+				</div> <!-- panel pagos -->
+
+		    <div id="import" class="tab-pane fade">
+					<h4 id="h3Import">Importar Gastos/Pagos del flat {{flat}}</h4>
+					<div id="divImport" style="border:2px gray solid;margin:8px">
+						<form	class="form" action="javascript:procesaCSV()">
+							<textarea class="form-control" rows="20" v-model="import.csv" name="import"	placeholder="pegar .csv"></textarea>
+							<input class="form-control" type="submit" value="Importar">
+						</form>
+					</div> <!-- #import -->
+				</div> <!-- panel import -->
+
+		    <div id="export" class="tab-pane fade">
+					<h4 id="h3Export">Exportar Gastos/Pagos del flat {{flat}}</h4>
+					<div id="divExport" style="border:2px gray solid;margin:8px">
+						<form	class="form" action="javascript:generaCSV()">
+							<textarea class="form-control" rows="20" v-model="export.csv" name="export"	placeholder=""></textarea>
+							<input class="form-control" type="submit" value="Exportar">
+						</form>
+					</div> <!-- #export -->
+				</div> <!-- panel export -->
+			</div> <!-- Tab content -->
+		</div> <!-- md6  Pagos -->
+	</div> <!-- row -->
+</div> <!-- container -->
+
+	<!--======================= MODAL ================================-->
+	<!-- template for the modal component -->
+	<script type="text/x-template" id="modal-template">
+		<transition name="modal">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+		</div>
+		</div>
+		</div>
+		</transition>
+	</script>
+
+	<!-- appEdit -->
+	<div id="appEdit">
+		<modal v-if="showModal" @close="showModal = false">
+
+			<h3 v-if="edit_t === 'PAGO'" slot="header">Pago</h3>
+			<h3 v-else-if="edit_t === 'GASTO'" slot="header">Gasto</h3>
+			<h3 v-else-if="edit_t === 'PISO'" slot="header">Propiedad</h3>
+			<h3 v-else-if="edit_t === 'USER'" slot="header">Usuario</h3>
+			<h3 v-else slot="header">Desconocido</h3>
+
+			<div slot="body">
+				<form	v-if="edit_t === 'PAGO'" class="form" action="javascript:grabaNuevoPago()">
+					<input class="form-control" v-model="pago.tipo" name="tipo"	placeholder="Tipo">
+					<input class="form-control" v-model="pago.euros" name="eur"	placeholder="Código Room">
+					<input class="form-control" v-model="fechas[0]" name="ini"	placeholder="F. inicio">
+					<input class="form-control" v-model="fechas[1]" name="fin"	placeholder="F. final">
+					<input class="form-control" v-model="fechas[2]" name="ing"	placeholder="F. ingreso">
+					<input class="form-control" type="submit" value="Grabar">
+				</form>
+
+				<form	v-if="edit_t === 'GASTO'" class="form" action="javascript:grabaNuevoGasto()">
+					<input class="form-control" v-model="gasto.tag" name="tag"	placeholder="Tag">
+					<input class="form-control" v-model="gasto.obj.tipo" name="tipo"	placeholder="Tipo (Luz,Gas...)">
+					<input class="form-control" v-model="gasto.obj.euros" name="eur"	placeholder="Importe">
+					<input class="form-control" v-model="fechas[0]" name="ini"	placeholder="F. inicio">
+					<input class="form-control" v-model="fechas[1]" name="fin"	placeholder="F.final">
+					<input class="form-control" v-model="fechas[2]" name="ope"	placeholder="F.operac">
+					<input class="form-control" type="submit" value="Grabar">
+				</form>
+
+				<form	v-else-if="edit_t === 'PISO'" class="form" action="javascript:grabaNuevoPiso()">
+					<input class="form-control" v-model="flat.tag" type="text" name="tag"	placeholder="Alias">
+					<input class="form-control" v-model="flat.obj.codPiso" type="text" name="codPiso"	placeholder="Código Piso">
+					<input class="form-control" v-model="flat.obj.direcc" type="text" name="direcc" placeholder="Dirección">
+					<input class="form-control" v-model="flat.obj.cpostal" type="text" name="cpostal"	placeholder="Cód. postal">
+					<input class="form-control" v-model="flat.obj.poblac" type="text" name="email"	placeholder="Población">
+					<input class="form-control" v-model="flat.obj.prov" type="text" name="telef"	placeholder="Provincia">
+					<input class="form-control" type="submit" value="Grabar">
+				</form>
+				
+				<form	v-else-if="edit_t === 'USER'" class="form" action="javascript:grabaNuevoUser()">
+					<input v-model="user._id" type="hidden" name="_id">
+					<input v-model="user.id0" type="hidden" name="id0">
+					<input v-model="user.md5" type="hidden" name="md5">
+					<input class="form-control" v-model="user.usr" type="text" name="usr"	placeholder="Usuario">
+					<input class="form-control" v-model="user.pwd" type="text" name="pwd" placeholder="Password">
+					<input class="form-control" v-model="user.conf" type="text" name="conf" placeholder="Confirmación">
+					<input class="btn btn-success" type="button" value="Grabar" onclick = "javascript:grabaNuevoUser()">
+				</form>
+
+
+			</div> <!-- slot body -->
+
+		</modal>
+	</div> <!-- appEdit -->
+
+
+	<!--======================= MODAL BIG ============================-->
+
+	<!-- template for the modal component BIG -->
+	<script type="text/x-template" id="modal-template-big">
+		<transition name="modal-big">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container-big">
+
+		<div class="modal-header">
+		<slot name="header">
+			
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+
+		</div> <!--container-big -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script >
+
+
+	<!-- appEditBig -->
+	<div id="appEditBig">
+		<modal-big v-if="showModal" @close="showModal = false">
+
+			<h3 v-if="edit_t === 'PACTO'" slot="header">Contrato</h3>
+			<h3 v-else slot="header">Desconocido</h3>
+
+			<div slot="body">
+				<div class="row">
+					<form class="form-horizontal" action="javascript:grabaNuevoPacto()">
+
+					<div class="col-xs-6">
+					<fieldset>
+					<legend>Inquilino</legend>
+
+					<div class="form-group"> <!-- Tag -->
+					<label for="nombre" class="col-xs-4 control-label">Alias</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.tag" name="tag"	placeholder="Alias">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Nombre -->
+					<label for="nombre" class="col-xs-4 control-label">Nombre</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.roomer.obj.nombre" name="nombre"	placeholder="Nombre">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Apellidos -->
+					<label for="nombre" class="col-xs-4 control-label">Apellidos</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.roomer.obj.apell" name="apell"	placeholder="Apellidos">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Dirección -->
+					<label for="nombre" class="col-xs-4 control-label">Dirección</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.roomer.obj.direcc" name="direcc"	placeholder="Dirección">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+					</fieldset>
+					</div> <!--xs-6 -->
+
+
+					<div class="col-xs-6">
+					<fieldset>
+					<legend>Datos</legend>
+
+					<div class="form-group"> <!-- Estado -->
+					<label for="precio" class="col-xs-4 control-label gray">Estado</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.status" name="status"	placeholder="Estado">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Precio -->
+					<label for="precio" class="col-xs-4 control-label">Precio</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.precio" name="precio"	placeholder="Alquiler">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Gastos -->
+					<label for="gastos" class="col-xs-4 control-label">Gastos</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.gastos" name="gastos"	placeholder="Gastos">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Fianza -->
+					<label for="fianza" class="col-xs-4 control-label">Fianza</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="pacto.obj.fianza" name="fianza"	placeholder="Fianza">
+					</div> <!--xs-8 -->
+					</div> <!-- group -->
+
+					</fieldset>
+					</div> <!--xs-6 -->
+
+					<div class="col-xs-6">
+					<fieldset>
+					<legend>Periodo</legend>
+
+					<div class="form-group"> <!-- Fecha ini -->
+					<label for="uta1" class="col-xs-4 control-label">F. inicio</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="fechas[0]" name="uta1"	placeholder="F. inicio">
+					</div> <!--xs-3 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Fecha fin -->
+					<label for="uta1" class="col-xs-4 control-label">F. final</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="fechas[1]" name="tau1"	placeholder="F.final">
+					</div> <!--xs-4 -->
+					</div> <!-- group -->
+					</fieldset>
+					</div> <!--xs-6 -->
+
+					<div class="col-xs-6">
+					<fieldset>
+					<legend>Check In/Out</legend>
+
+					<div class="form-group"> <!-- Check-in -->
+					<label for="uta1" class="col-xs-4 control-label">Check-in</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="fechas[2]" name="uta2"	placeholder="Check-in">
+					</div> <!--xs-4 -->
+					</div> <!-- group -->
+
+					<div class="form-group"> <!-- Check-out -->
+					<label for="uta1" class="col-xs-4 control-label">Check-out</label>
+					<div class="col-xs-8">
+					<input class="form-control" v-model="fechas[3]" name="tau2"	placeholder="Check-out">
+					</div> <!--xs-4 -->
+					</div> <!-- group -->
+
+					</fieldset>
+					</div> <!--xs-12 -->
+							<input class="btn btn-default" type="submit" value="Grabar">
+							<input class="btn btn-danger" type="button" value="-Pagos" onclick="javascript:borraPagos()">
+
+					</form>
+				</div>
+			</div> <!-- slot body -->
+		</modal-big>
+	</div> <!-- appEditBig -->
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta tag='viewport' content='width=device-width, item-scalable=no'>
+<!--	==================== REMOTO ================== -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+<!--	==================== LOCAL ================== >
+
+	<link rel="stylesheet" href="lib/bootstrap.css">
+	<link rel="stylesheet" href="lib/font-awesome.css">
+	<script src="lib/jQuery.js"></script>
+	<script src="lib/bootstrap.js"></script>
+	<script src="lib/vue.js"></script -->
+
+	<link rel="stylesheet" href="css/vueModal.css">
+
+<style type="text/css">
+.item {
+	cursor: pointer;
+}
+ul {
+	padding-left: 2em;
+	line-height: 1.5em;
+	list-style-type: none;
+}
+</style>
+	<script type='text/javascript' src='lib/libBase64.js'></script>
+	<script type='text/javascript' src='k1/libK1_Topol.js'></script>
+	<script type='text/javascript' src='k1/libK1_Clases.js'></script>
+	<script type='text/javascript' src='k1/libK1_Utils.js'></script>
+	<script type='text/javascript' src='k1/libK1_Algebra.js'></script>
+	<script type='text/javascript' src='k1/libK1_Sesion.js'></script>
+	<script type='text/javascript' src='k1/libK1_Ajax.js'></script>
+
+	
+	<script type='text/javascript' src='js/rooms_VGlob.js'></script>
+	<script type='text/javascript' src='js/rooms_vApps.js'></script>
+	<script type='text/javascript' src='js/rooms_Ajax.js'></script>
+	<script type='text/javascript' src='js/rooms_Random.js'></script>
+	<script type='text/javascript' src='js/rooms_Clases.js'></script>
+	<script type='text/javascript' src='js/rooms_Sesion.js'></script>
+	<script type='text/javascript' src='js/rooms_Gastos.js'></script>
+
+	<script type='text/javascript' src='js/pkg_Grupo.js'></script>
+	<script type='text/javascript' src='js/pkg_Owner.js'></script>
+	<script type='text/javascript' src='js/pkg_Flats.js'></script>
+	<script type='text/javascript' src='js/pkg_Rooms.js'></script>
+	<script type='text/javascript' src='js/pkg_Pactos.js'></script>
+	<script type='text/javascript' src='js/pkg_Money.js'></script>
+	<script type='text/javascript' src='js/pkg_Stock.js'></script>
+	<script type='text/javascript' src='js/mod_stocks.js'></script>
+
+<title>Inventario</title>
+
+</head>
+<body onload="javascript:initStocks()">
+
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Inventario</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="index.html">Home</a></li>
+
+
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user">&nbsp;</i><span id="usrMenu"> User</span>
+					<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:cambiaPwdUser()">Cambiar password</a></li>
+						<li><a href="javascript:cierraSesion()">Cerrar sesión</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav> 
+
+
+<div class="container">
+<div class="row">
+
+<div class="col-md-12">
+<!-- the demo root element -->
+<ul id="stock">
+	<item class="item" :model="treeData"> </item>
+</ul>
+</div> <!-- col-md-10 -->
+
+</div> <!--row -->
+</div> <!-- container -->
+
+<script type="text/x-template" id="item-template">
+	<li style =" margin-top:2px;border-left:1px solid gray">
+		<div>
+			<span	@click="toggle" class="btn btn-info btn-xs" v-if="isFolder && open"><i class="fa fa-minus"></i></span>
+			<span	@click="toggle" class="btn btn-info btn-xs" v-else-if="isFolder && !open"><i class="fa fa-plus"></i></span>
+			 <b>{{ model.tag }}	</b> {{ model.descrip }}
+			<span class="btn btn-warning btn-xs pull-right"	@click="editItem"><i class="fa fa-pencil"></i></span>
+		</div>
+		<ul v-show="open" v-if="isFolder">
+			<item
+				class="item"
+				v-for="(model, index) in model.hijos"
+				:key="index"
+				:model="model">
+			</item>
+			<li class="btn btn-default btn-xs " @click="addChild()">+</li>
+		</ul>
+	</li>
+</script>
+
+	<!-- template for the modal component -->
+	<script type="text/x-template" id="modal-template">
+		<transition name="modal">
+		<div class="modal-mask">
+		<div class="modal-wrapper">
+		<div class="modal-container">
+
+		<div class="modal-header">
+		<slot name="header">
+			default header
+		</slot>
+		</div>
+
+		<div class="modal-body">
+		<slot name="body">
+		</slot>
+		</div>
+
+		<div class="modal-footer">
+		<slot name="footer">
+			<button class="modal-default-button" @click="$emit('close')">OK</button>
+		</slot>
+		</div>
+
+		</div> <!--container -->
+		</div> <!--wrapper -->
+		</div> <!--mask -->
+		</transition>
+	</script>
+
+	<!-- appEdit -->
+	<div id="appEdit">
+		<modal v-if="showModal" @close="showModal = false">
+
+		<h3 v-if="edit_t === 'STOCK'" slot="header">Nombre del Stock?</h3>
+		<h3 v-else-if="edit_t === 'ITEM'" slot="header">Item</h3>
+		<h3 v-else-if="edit_t === 'CHISME'" slot="header">Aparato</h3>
+		<h3 v-else-if="edit_t === 'USER'" slot="header">Usuario</h3>
+		<h3 v-else slot="header">Desconocido</h3>
+
+		<div slot="body">
+			<form v-if="edit_t === 'STOCK'" class="form" action="javascript:grabaNuevoStock()">
+				<input v-model="stock" type="text" name="stock">
+				<input type="submit" value="Grabar">
+			</form>
+
+			<form v-else-if="edit_t === 'ITEM'" class="form" action="javascript:grabaNuevoUser()">
+				 <input v-model="item.id0" type="hidden" name="id0">
+				<input class="form-control" v-model="item.tag" type="text" name="tag" placeholder="Tag">
+				<input	v-if="item.iam != 'rNodo'" class="form-control" v-model="item.obj.descrip" type="text" name="descrip" placeholder="Descripción">
+				<input class="btn btn-success" type="button" value="Grabar" onclick = "javascript:grabaNuevoItem()">
+				<input v-if="item.hijos.length == 0"	class="btn btn-default" type="button" value="+ Hijo" onclick = "javascript:addNuevoHijo()">
+			</form>
+
+			<form v-else-if="edit_t === 'CHISME'" class="form" action="javascript:grabaNuevoOwner()">
+				<input class="form-control" v-model="chisme.tag" type="text" name="tag"	placeholder="Alias">
+				<input class="form-control" v-model="chisme.obj.nombre" type="text" name="nombre" placeholder="Nombre">
+				<input class="form-control" v-model="chisme.obj.apell" type="text" name="apell"	placeholder="Apellidos">
+				<input class="form-control" v-model="chisme.obj.email" type="text" name="email"	placeholder="e-Mail">
+				<input class="form-control" v-model="chisme.obj.telef" type="text" name="telef"	placeholder="Telefono">
+				<input class="form-control" v-model="chisme.obj.codResa" type="text" name="codResa"	placeholder="Código RESA">
+				<input class="form-control" v-model="chisme.obj.codIBAN" type="text" name="codIBAN"	placeholder="IBAN">
+				<input class="form-control" type="submit" value="Grabar">
+			</form>
+
+			<form	v-else-if="edit_t === 'USER'" class="form" action="javascript:grabaNuevoUser()">
+				<input v-model="user._id" type="hidden" name="_id">
+				<input v-model="user.id0" type="hidden" name="id0">
+				<input v-model="user.md5" type="hidden" name="md5">
+				<input class="form-control" v-model="user.usr" type="text" name="usr"	placeholder="Usuario">
+				<input class="form-control" v-model="user.pwd" type="text" name="pwd" placeholder="Password">
+				<input class="form-control" v-model="user.conf" type="text" name="conf" placeholder="Confirmación">
+				<input class="btn btn-success" type="button" value="Grabar" onclick = "javascript:grabaNuevoUser()">
+			</form>
+
+
+		</div>
+		</modal>
+	</div>
+
+</body>
+</html>
